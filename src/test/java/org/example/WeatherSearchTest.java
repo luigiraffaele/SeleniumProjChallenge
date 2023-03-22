@@ -10,6 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -20,11 +21,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 public class WeatherSearchTest {
     private WebDriver driver;
     private WebDriverWait wait;
-    private String location = "Miami, Florida";
+    private String location = "Miami,Florida";
     private String apiKey = "ca888afc447e8897364d3bd6ee738b92";
     private HttpClient httpClient = HttpClient.newHttpClient();
     private JsonParser parser = new JsonParser();
@@ -34,7 +36,10 @@ public class WeatherSearchTest {
         // Set ChromeDriver path
         System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait = new WebDriverWait(driver, 10);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--remote-allow-origins=*");
+        driver = new ChromeDriver(options);
     }
 
     @Test
@@ -47,7 +52,8 @@ public class WeatherSearchTest {
         WebElement searchBox = driver.findElement(By.name("q"));
         searchBox.sendKeys("Weather in " + location);
         searchBox.submit();
-        wait.until(ExpectedConditions.titleContains(location + " - Google Search"));
+        //wait.until(ExpectedConditions.titleContains(location));
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         String searchResultTemp = driver.findElement(By.cssSelector(".wob_t")).getText();
 
         //5. Make a call to the OpenWeatherMap API to retrieve weather data for the same specific location
@@ -69,6 +75,6 @@ public class WeatherSearchTest {
         }
 
         //6. Print the temperature difference between the results in 4 and 5
-        System.out.println("Step 4 resul is: " + searchResultTemp + " Step 5 result is: " + apiResultTemp);
+        System.out.println("Step 4 result is: " + searchResultTemp + " Step 5 result is: " + apiResultTemp);
     }
 }

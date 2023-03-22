@@ -4,6 +4,7 @@ package org.example;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -11,7 +12,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class WeatherSearchTest {
@@ -42,6 +41,11 @@ public class WeatherSearchTest {
         driver = new ChromeDriver(options);
     }
 
+    @After
+    public void tearDown(){
+        driver.quit();
+    }
+
     @Test
     public void testWeatherSearch() throws URISyntaxException {
         //1. Open Google homepage using Selenium
@@ -55,7 +59,6 @@ public class WeatherSearchTest {
         //wait.until(ExpectedConditions.titleContains(location));
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         String searchResultTemp = driver.findElement(By.cssSelector(".wob_t")).getText();
-        driver.quit();
 
         //5. Make a call to the OpenWeatherMap API to retrieve weather data for the same specific location
         // and deserialize the result into an object

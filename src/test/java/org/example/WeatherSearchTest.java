@@ -55,6 +55,7 @@ public class WeatherSearchTest {
         //wait.until(ExpectedConditions.titleContains(location));
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         String searchResultTemp = driver.findElement(By.cssSelector(".wob_t")).getText();
+        driver.quit();
 
         //5. Make a call to the OpenWeatherMap API to retrieve weather data for the same specific location
         // and deserialize the result into an object
@@ -75,6 +76,10 @@ public class WeatherSearchTest {
         }
 
         //6. Print the temperature difference between the results in 4 and 5
-        System.out.println("Step 4 result is: " + searchResultTemp + " Step 5 result is: " + apiResultTemp);
+        double apiCelsius = apiResultTemp - 273;
+        double searchResultCelsius = Double.parseDouble(searchResultTemp);
+        System.out.println("Step 4 t is: " + searchResultCelsius + " Step 5 result is: " + apiCelsius);
+        double difference = searchResultCelsius - apiCelsius;
+        System.out.println("Difference between step 4 and 5: " + difference) ;
     }
 }
